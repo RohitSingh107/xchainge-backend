@@ -6,15 +6,14 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract XchaingeToken is ERC721, ERC721URIStorage, Ownable {
+    event NFTMinted(address indexed to, uint256 indexed tokenId);
+
     constructor() ERC721("XchaingeToken", "OWN") {}
 
-    function safeMint(
-        address to,
-        uint256 tokenId,
-        string memory uri
-    ) public onlyOwner {
-        _safeMint(to, tokenId);
+    function safeMint(uint256 tokenId, string memory uri) public onlyOwner {
+        _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, uri);
+        emit NFTMinted(msg.sender, tokenId);
     }
 
     // The following functions are overrides required by Solidity.
