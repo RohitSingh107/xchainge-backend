@@ -1,16 +1,31 @@
 import { network, ethers } from "hardhat"
 import { moveBlocks } from "../utils/move-blocks"
 import { Xchainge, XchaingeToken } from "../typechain-types"
+import { storeNFT } from "../utils/uploadToNFTstorage"
 
+const imageLocation = "./images/test/0008.jpg"
+const productId = "12"
 const PRICE = ethers.utils.parseEther("0.1")
 
 async function mintAndList() {
+  const token = await storeNFT(
+    imageLocation,
+    "My old product",
+    productId,
+    "My product is useful"
+  )
+  console.log(token)
+  const { ipnft, url, data } = token
+
   const xchainge: Xchainge = await ethers.getContract("Xchainge")
-  const randomNumber = Math.floor(Math.random() * 2)
+
   const xchaingeToken: XchaingeToken = await ethers.getContract("XchaingeToken")
 
   console.log("Minting NFT...")
-  const mintTx = await xchaingeToken.safeMint("9", "This is uri")
+  const mintTx = await xchaingeToken.safeMint(
+    data.properties.productId,
+    url.toString()
+  )
   const mintTxReceipt = await mintTx.wait(1)
   const tokenId = mintTxReceipt.events[0].args.tokenId
   console.log("Approving NFT...")

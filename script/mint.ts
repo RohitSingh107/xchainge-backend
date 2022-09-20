@@ -3,22 +3,25 @@ import { moveBlocks } from "../utils/move-blocks"
 import { XchaingeToken } from "../typechain-types"
 import { storeNFT } from "../utils/uploadToNFTstorage"
 
-const TOKEN_ID = "13"
-const imageLocation = "./images/test/wall.jpg"
+const imageLocation = "./images/test/0008.jpg"
+const productId = "11"
 
 async function mint() {
   const token = await storeNFT(
     imageLocation,
     "My old product",
-    "1001",
+    productId,
     "My product is useful"
   )
   console.log(token)
-  const { ipnft, url } = token
+  const { ipnft, url, data } = token
 
   const xchaingeToken: XchaingeToken = await ethers.getContract("XchaingeToken")
   console.log("Minting NFT...")
-  const mintTx = await xchaingeToken.safeMint(TOKEN_ID, url.toString())
+  const mintTx = await xchaingeToken.safeMint(
+    data.properties.productId,
+    url.toString()
+  )
   const mintTxReceipt = await mintTx.wait(1)
   console.log(
     `Minted tokenId ${mintTxReceipt.events[0].args.tokenId.toString()} from contract: ${
