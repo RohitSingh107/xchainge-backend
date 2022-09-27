@@ -1,20 +1,20 @@
-import "@nomicfoundation/hardhat-toolbox";
-import { HardhatUserConfig } from "hardhat/config";
-import fs from "fs";
-import "hardhat-preprocessor";
-import "hardhat-deploy";
-import '@typechain/hardhat'
-import '@nomiclabs/hardhat-ethers'
-import '@nomiclabs/hardhat-waffle'
+import "@nomicfoundation/hardhat-toolbox"
+import { HardhatUserConfig } from "hardhat/config"
+import fs from "fs"
+import "hardhat-preprocessor"
+import "hardhat-deploy"
+import "@typechain/hardhat"
+import "@nomiclabs/hardhat-ethers"
+import "@nomiclabs/hardhat-waffle"
 import "dotenv/config"
-
+import "hardhat-gas-reporter"
 
 function getRemappings() {
   return fs
     .readFileSync("remappings.txt", "utf8")
     .split("\n")
     .filter(Boolean) // remove empty lines
-    .map((line) => line.trim().split("="));
+    .map((line) => line.trim().split("="))
 }
 
 const config: HardhatUserConfig = {
@@ -25,11 +25,11 @@ const config: HardhatUserConfig = {
         if (line.match(/^\s*import /i)) {
           getRemappings().forEach(([find, replace]) => {
             if (line.match(find)) {
-              line = line.replace(find, replace);
+              line = line.replace(find, replace)
             }
-          });
+          })
         }
-        return line;
+        return line
       },
     }),
   },
@@ -61,24 +61,32 @@ const config: HardhatUserConfig = {
       url: process.env.GOERLI_RPC_URL,
       accounts: [process.env.PRIVATE_KEY!],
     },
-
+    polygonMumbai: {
+      chainId: 80001,
+      url: process.env.MUMBAI_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY!],
+    },
   },
 
   mocha: {
     timeout: 300000, // 300 seconds max
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      goerli: process.env.ETHERSCAN_API_KEY!,
+      rinkeby: process.env.ETHERSCAN_API_KEY!,
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY!,
+    },
   },
 
   gasReporter: {
     // enabled: process.env.REPORT_GAS !== undefined,
-    enabled: false,
+    enabled: true,
     currency: "INR",
-    outputFile: "gas-report.txt",
-    noColors: true,
+    // outputFile: "gas-report.txt",
+    // noColors: true,
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
-    token: "ETH",
+    token: "Matic",
   },
 
   namedAccounts: {
@@ -89,12 +97,6 @@ const config: HardhatUserConfig = {
       default: 1,
     },
   },
+}
 
-
-
-
-
-
-};
-
-export default config;
+export default config
