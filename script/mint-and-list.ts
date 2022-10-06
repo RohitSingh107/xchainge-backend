@@ -4,8 +4,8 @@ import { Xchainge, XchaingeToken } from "../typechain-types"
 import { storeNFT } from "../utils/uploadToNFTstorage"
 
 const imageLocation = "./images/test/0008.jpg"
-const productId = "12"
-const PRICE = ethers.utils.parseEther("0.1")
+const productId = "11"
+const PRICE = ethers.utils.parseEther("0.01")
 
 async function mintAndList() {
   const token = await storeNFT(
@@ -17,9 +17,10 @@ async function mintAndList() {
   console.log(token)
   const { ipnft, url, data } = token
 
-  const xchainge: Xchainge = await ethers.getContract("Xchainge")
+  // const xchainge: Xchainge = await ethers.getContract("Xchainge")
 
-  const xchaingeToken: XchaingeToken = await ethers.getContract("XchaingeToken")
+  const xchainge: Xchainge = await ethers.getContractAt("Xchainge", "0x2f19C27DE68b162989B1cA9A742CE493607C17C4")
+  const xchaingeToken: XchaingeToken = await ethers.getContractAt("XchaingeToken", "0x204DA0Cb23ee397C8F4338EE1306d3F9D2d30063")
 
   console.log("Minting NFT...")
   const mintTx = await xchaingeToken.safeMint(
@@ -27,7 +28,7 @@ async function mintAndList() {
     url.toString()
   )
   const mintTxReceipt = await mintTx.wait(1)
-  const tokenId = mintTxReceipt.events[0].args.tokenId
+  const tokenId = mintTxReceipt.events![0].args!.tokenId
   console.log("Approving NFT...")
   const approvalTx = await xchaingeToken.approve(xchainge.address, tokenId)
   await approvalTx.wait(1)
