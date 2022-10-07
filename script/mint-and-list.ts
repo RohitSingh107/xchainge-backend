@@ -3,9 +3,13 @@ import { moveBlocks } from "../utils/move-blocks"
 import { Xchainge, XchaingeToken } from "../typechain-types"
 import { storeNFT } from "../utils/uploadToNFTstorage"
 
+import xchaingeAddressMumbai from "../broadcast/Xchainge.s.sol/80001/run-latest.json"
+import xchaingeTokenAddressMumbai from "../broadcast/XchaingeToken.s.sol/80001/run-latest.json"
+
 const imageLocation = "./images/test/0008.jpg"
-const productId = "11"
-const PRICE = ethers.utils.parseEther("0.01")
+const productId = "17"
+// const PRICE = ethers.utils.parseEther("0.01")
+const PRICE = "1"
 
 async function mintAndList() {
   const token = await storeNFT(
@@ -17,10 +21,12 @@ async function mintAndList() {
   console.log(token)
   const { ipnft, url, data } = token
 
-  // const xchainge: Xchainge = await ethers.getContract("Xchainge")
 
-  const xchainge: Xchainge = await ethers.getContractAt("Xchainge", "0x2f19C27DE68b162989B1cA9A742CE493607C17C4")
-  const xchaingeToken: XchaingeToken = await ethers.getContractAt("XchaingeToken", "0x204DA0Cb23ee397C8F4338EE1306d3F9D2d30063")
+  const xchaingeAddress = xchaingeAddressMumbai["transactions"][0]["contractAddress"]
+  const xchaingeTokenAddress = xchaingeTokenAddressMumbai["transactions"][0]["contractAddress"]
+
+  const xchainge: Xchainge = await ethers.getContractAt("Xchainge", xchaingeAddress)
+  const xchaingeToken: XchaingeToken = await ethers.getContractAt("XchaingeToken", xchaingeTokenAddress)
 
   console.log("Minting NFT...")
   const mintTx = await xchaingeToken.safeMint(
