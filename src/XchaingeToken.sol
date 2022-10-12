@@ -10,7 +10,7 @@ contract XchaingeToken is ERC721, ERC721URIStorage, Ownable {
 
   constructor() ERC721("XchaingeToken", "OWN") {}
 
-  function safeMint(uint256 tokenId, string memory uri) public onlyOwner {
+  function safeMint(uint256 tokenId, string memory uri) public {
     _safeMint(msg.sender, tokenId);
     _setTokenURI(tokenId, uri);
     emit NFTMinted(msg.sender, tokenId);
